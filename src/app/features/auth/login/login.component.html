@@ -1,6 +1,6 @@
 <div class="login-container">
 
-    <form class="login-card" (ngSubmit)="onLogin()">
+    <form class="login-card" [formGroup]="loginForm" (ngSubmit)="onLogin()">
 
         <div class="login-header">
             <i class="bi bi-shop login-logo"></i>
@@ -15,30 +15,48 @@
                 Correo electrónico
             </label>
 
-            <input
-                id="email"
-                type="email"
-                placeholder="ejemplo@dominio.com"
-                [(ngModel)]="email"
-                name="email"
-            >
+            <input id="email" type="email" placeholder="ejemplo@dominio.com" formControlName="email">
+
+            @if (
+            loginForm.controls.email.hasError('required') &&
+            loginForm.controls.email.touched
+            ) {
+            <span class="field-error">
+                El correo electrónico es obligatorio.
+            </span>
+            }
+
+            @if (
+            loginForm.controls.email.hasError('email') &&
+            loginForm.controls.email.touched
+            ) {
+            <span class="field-error">
+                Introduce un correo electrónico válido.
+            </span>
+            }
+
 
         </div>
 
         <div class="form-group">
 
             <label for="password">
-                <i class="bi bi-key-fill"></i>   
+                <i class="bi bi-key-fill"></i>
                 Contraseña
             </label>
 
-            <input
-                id="password"
-                type="password"
-                placeholder="Contraseña"
-                [(ngModel)]="password"
-                name="password"
-            >
+            <input id="password" type="password" placeholder="Contraseña" formControlName="password">
+
+            @if (
+            loginForm.controls.password.hasError('required') &&
+            loginForm.controls.password.touched
+            ) {
+            <span class="field-error">
+                La contraseña es obligatoria.
+            </span>
+            }
+
+
 
         </div>
 
