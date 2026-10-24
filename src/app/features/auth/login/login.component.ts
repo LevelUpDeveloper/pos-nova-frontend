@@ -46,7 +46,7 @@ export class LoginComponent {
 
     this.authService.login(dataRequest).subscribe({
       next: response => {
-        this.router.navigate(['/admin-panel.component']);
+        this.router.navigate(['/admin-panel']);
       },
 
       error: error => {

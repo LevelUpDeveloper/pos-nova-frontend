@@ -14,7 +14,7 @@ export const routes: Routes = [
     },
 
     {
-        path: 'admin-panel.component',
+        path: 'admin-panel',
         component: AdminPanelComponent
     }
 ];
