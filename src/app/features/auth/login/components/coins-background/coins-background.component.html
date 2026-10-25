@@ -1,0 +1,33 @@
+<div
+  class="absolute -bottom-40 left-1/2 h-[360px] w-[1100px] -translate-x-1/2 rounded-[50%] bg-[#6d5df6] opacity-[0.16] blur-[90px]"
+></div>
+
+@for (f of floaters; track $index) {
+  @if (f.type === 'coin') {
+    <span
+      class="coin-face absolute bottom-[-70px] grid place-items-center rounded-full font-mono font-extrabold motion-safe:animate-rise motion-reduce:hidden"
+      [style.left.%]="f.left"
+      [style.width.px]="f.width"
+      [style.height.px]="f.height"
+      [style.font-size.px]="f.width * 0.45"
+      [style.opacity]="f.opacity"
+      [style.animation-duration.s]="f.duration"
+      [style.animation-delay.s]="f.delay"
+      >$</span
+    >
+  } @else {
+    <span
+      class="absolute bottom-[-70px] flex flex-col justify-center gap-[4px] rounded-[3px] bg-paper px-[5px] motion-safe:animate-rise motion-reduce:hidden"
+      [style.left.%]="f.left"
+      [style.width.px]="f.width"
+      [style.height.px]="f.height"
+      [style.opacity]="f.opacity"
+      [style.animation-duration.s]="f.duration"
+      [style.animation-delay.s]="f.delay"
+    >
+      @for (line of f.lines; track line) {
+        <i class="block h-[2px] rounded bg-[#9aa1ba]"></i>
+      }
+    </span>
+  }
+}

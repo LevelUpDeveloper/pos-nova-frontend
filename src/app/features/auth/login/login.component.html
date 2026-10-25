@@ -1,73 +1,233 @@
-<div class="login-container">
+<div class="nova-login bg-nova-night relative flex min-h-dvh flex-col overflow-x-hidden font-sans text-ink antialiased">
 
-    <form class="login-card" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+  <app-coins-background />
 
-        <div class="login-header">
-            <i class="bi bi-shop login-logo"></i>
-            <h1>NOVA</h1>
-            <p>Inicia sesión para continuar</p>
-        </div>
+  <!-- Encabezado -->
+  <header class="relative mx-auto flex w-full max-w-[1280px] items-center justify-between px-5 py-5 motion-safe:animate-enter sm:px-10 short:py-4">
+    <div class="flex items-center gap-3">
+      <span class="grid size-11 place-items-center rounded-xl bg-linear-to-br from-violet-pale via-violet to-violet-deep text-xl text-white shadow-lg shadow-violet-deep/40 ring-1 ring-white/20" aria-hidden="true">
+        <i class="bi bi-shop"></i>
+      </span>
+      <div class="leading-tight">
+        <p class="text-base font-extrabold tracking-[0.22em]">NOVA</p>
+        <p class="whitespace-nowrap text-xs font-medium text-muted">Punto de venta</p>
+      </div>
+    </div>
 
-        <div class="form-group">
-
-            <label for="email">
-                <i class="bi bi-envelope"></i>
-                Correo electrónico
-            </label>
-
-            <input id="email" type="email" placeholder="ejemplo@dominio.com" formControlName="email">
-
-            @if (
-            loginForm.controls.email.hasError('required') &&
-            loginForm.controls.email.touched
-            ) {
-            <span class="field-error">
-                El correo electrónico es obligatorio.
-            </span>
-            }
-
-            @if (
-            loginForm.controls.email.hasError('email') &&
-            loginForm.controls.email.touched
-            ) {
-            <span class="field-error">
-                Introduce un correo electrónico válido.
-            </span>
-            }
-
-
-        </div>
-
-        <div class="form-group">
-
-            <label for="password">
-                <i class="bi bi-key-fill"></i>
-                Contraseña
-            </label>
-
-            <input id="password" type="password" placeholder="Contraseña" formControlName="password">
-
-            @if (
-            loginForm.controls.password.hasError('required') &&
-            loginForm.controls.password.touched
-            ) {
-            <span class="field-error">
-                La contraseña es obligatoria.
-            </span>
-            }
-
-
-
-        </div>
-
-        <button type="submit">
-            Iniciar sesión
+    <div class="flex items-center gap-2.5">
+      @if (!isDesktop()) {
+        <button type="button" class="inline-flex items-center gap-2 rounded-full bg-linear-to-b from-violet to-violet-deep px-4 py-2 text-[13px] font-bold text-white shadow-lg shadow-violet-deep/30" (click)="openGames()">
+          <i class="bi bi-controller" aria-hidden="true"></i>Jugar
         </button>
+      }
+      <span class="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-white/5 px-3 py-2 sm:px-3.5 text-[13px] font-medium text-muted-3 ring-1 ring-white/10 backdrop-blur" role="status">
+        <span class="relative flex size-2 shrink-0" aria-hidden="true">
+          @if (online()) {
+            <span class="absolute inline-flex size-full rounded-full bg-success-soft opacity-60 motion-safe:animate-ping"></span>
+          }
+          <span class="relative inline-flex size-2 rounded-full" [class]="online() ? 'bg-success' : 'bg-danger'"></span>
+        </span>
+        <span class="max-sm:sr-only">{{ online() ? 'En línea' : 'Sin conexión' }}</span>
+      </span>
+    </div>
+  </header>
 
-        <div *ngIf="errorMessage" class="error-message">
-            {{ errorMessage }}
+  <!-- Tres columnas: información · ticket de acceso · minijuegos -->
+  <main class="relative mx-auto flex w-full max-w-[1280px] flex-1 flex-wrap items-center justify-center gap-10 px-4 pb-8 sm:px-10 short:pb-4">
+
+    @if (isDesktop()) {
+      <app-info-panel
+        class="block w-full max-w-[300px] motion-safe:animate-enter [animation-delay:.08s]"
+        [branchName]="info.branchName"
+        [registerName]="info.registerName"
+        [notice]="info.notice"
+        [online]="online()"
+        [now]="now()"
+      />
+    }
+
+    <section class="w-full max-w-[360px]" aria-label="Inicio de sesión">
+      <!-- Impresora (decorativa) -->
+      <div class="relative z-10 rounded-[24px] bg-linear-to-b from-[#2e2a63] via-[#1f1c4a] to-[#141236] p-4 pb-6 shadow-[0_30px_60px_-15px_rgb(0_0_0/0.6),inset_0_1px_0_rgb(255_255_255/0.12)] ring-1 ring-white/10 motion-safe:animate-enter" aria-hidden="true">
+        <div class="flex items-center justify-between px-1">
+          <span class="font-mono text-[10px] font-medium tracking-[0.25em] text-muted">NOVA · TP-80</span>
+          <div class="flex items-center gap-2">
+            <span class="size-1.5 rounded-full bg-success shadow-[0_0_8px_2px_rgb(34_197_94/0.6)]"></span>
+            <span class="size-1.5 rounded-full transition-colors" [class]="state() === 'submitting' ? 'bg-amber-400 shadow-[0_0_8px_2px_rgb(251_191_36/0.6)]' : 'bg-slate-600'"></span>
+          </div>
         </div>
+        <div class="absolute inset-x-5 bottom-3 h-2.5 rounded-full bg-black/80 shadow-[inset_0_2px_4px_rgb(0_0_0/0.8)]">
+          <div class="absolute inset-x-6 -bottom-px h-px bg-violet-soft/70 blur-[1px]"></div>
+        </div>
+      </div>
 
-    </form>
+      <!-- Ticket de acceso -->
+      <div class="relative -mx-6 -mb-8 -mt-3 overflow-hidden px-9 pb-12">
+        <div class="drop-shadow-[0_24px_30px_rgb(0_0_0/0.45)] motion-safe:animate-print">
+          <form
+            #ticket
+            class="ticket-edge paper-lines relative bg-paper px-6 pb-7 pt-5 text-paper-ink"
+            [formGroup]="loginForm"
+            (ngSubmit)="onLogin()"
+            (focusin)="onFormFocusIn($event)"
+            (focusout)="formFocused.set(false)"
+            novalidate
+          >
+            <div class="text-center font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">
+              <p class="font-bold text-paper-ink">NOVA · Punto de venta</p>
+              <p class="mt-0.5">Ticket de acceso</p>
+            </div>
+            <div class="my-4 border-t-2 border-dashed border-slate-300"></div>
 
+            <h1 class="text-[1.6rem] font-extrabold leading-tight tracking-tight">Bienvenido de nuevo</h1>
+            <p class="mt-1.5 text-sm text-slate-600">Inicia sesión para administrar tu negocio</p>
+
+            @if (errorMessage()) {
+              <div class="mt-4 flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700" role="alert">
+                <i class="bi bi-exclamation-octagon-fill mt-px" aria-hidden="true"></i>
+                <span>{{ errorMessage() }}</span>
+              </div>
+            }
+
+            <div class="mt-5 flex flex-col gap-4">
+              <div>
+                <label for="email" class="mb-2 block text-sm font-semibold text-slate-700">Correo electrónico</label>
+                <div class="group relative">
+                  <i class="bi bi-envelope pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-violet-deep" aria-hidden="true"></i>
+                  <input
+                    id="email"
+                    type="email"
+                    autocomplete="username"
+                    placeholder="nombre@empresa.com"
+                    formControlName="email"
+                    class="h-12 w-full rounded-xl border border-slate-200 bg-white pl-11 pr-4 text-base text-paper-ink outline-hidden transition placeholder:text-slate-400 hover:border-slate-300 focus:border-violet focus:ring-4 focus:ring-violet/20 aria-invalid:border-rose-400 sm:text-[15px]"
+                    [attr.aria-invalid]="isInvalid('email')"
+                    aria-describedby="email-error"
+                  />
+                </div>
+                <p id="email-error" class="mt-1.5 text-[13px] font-medium text-rose-600" aria-live="polite">
+                  @if (hasError('email', 'required')) {
+                    <i class="bi bi-exclamation-circle" aria-hidden="true"></i> El correo electrónico es obligatorio.
+                  } @else if (hasError('email', 'email')) {
+                    <i class="bi bi-exclamation-circle" aria-hidden="true"></i> Introduce un correo electrónico válido.
+                  }
+                </p>
+              </div>
+
+              <div>
+                <label for="password" class="mb-2 block text-sm font-semibold text-slate-700">Contraseña</label>
+                <div class="group relative">
+                  <i class="bi bi-lock pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-violet-deep" aria-hidden="true"></i>
+                  <input
+                    id="password"
+                    [type]="showPassword() ? 'text' : 'password'"
+                    autocomplete="current-password"
+                    placeholder="••••••••"
+                    formControlName="password"
+                    class="h-12 w-full rounded-xl border border-slate-200 bg-white pl-11 pr-12 text-base text-paper-ink outline-hidden transition placeholder:text-slate-400 hover:border-slate-300 focus:border-violet focus:ring-4 focus:ring-violet/20 aria-invalid:border-rose-400 sm:text-[15px]"
+                    [attr.aria-invalid]="isInvalid('password')"
+                    aria-describedby="password-error"
+                  />
+                  <button
+                    type="button"
+                    class="absolute right-1 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-lg text-[17px] text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+                    [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                    [attr.aria-pressed]="showPassword()"
+                    (click)="showPassword.set(!showPassword())"
+                  >
+                    <i class="bi" [class]="showPassword() ? 'bi-eye-slash' : 'bi-eye'" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <p id="password-error" class="mt-1.5 text-[13px] font-medium text-rose-600" aria-live="polite">
+                  @if (hasError('password', 'required')) {
+                    <i class="bi bi-exclamation-circle" aria-hidden="true"></i> La contraseña es obligatoria.
+                  }
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="group relative mt-6 flex h-13 w-full items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-linear-to-b text-[15px] font-bold text-white transition hover:brightness-110 active:translate-y-px disabled:cursor-wait"
+              [class]="state() === 'success'
+                ? 'from-success to-emerald-600 shadow-[0_12px_24px_-10px_rgb(34_197_94/0.8)]'
+                : 'from-violet to-violet-deep shadow-[0_1px_0_rgb(255_255_255/0.25)_inset,0_12px_24px_-10px_rgb(91_71_240/0.85)]'"
+              [disabled]="state() === 'submitting' || state() === 'success'"
+              [attr.aria-busy]="state() === 'submitting'"
+            >
+              <span class="pointer-events-none absolute inset-y-0 left-0 w-1/3 -translate-x-[120%] bg-linear-to-r from-transparent via-white/25 to-transparent group-hover:motion-safe:animate-sweep" aria-hidden="true"></span>
+              @switch (state()) {
+                @case ('submitting') {
+                  <svg class="size-5 motion-safe:animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-opacity=".25" stroke-width="3" />
+                    <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                  </svg>
+                  Verificando…
+                }
+                @case ('success') {
+                  <i class="bi bi-check2-circle text-lg" aria-hidden="true"></i>Acceso aprobado
+                }
+                @default {
+                  <i class="bi bi-upc-scan text-lg" aria-hidden="true"></i>Iniciar sesión
+                  <i class="bi bi-arrow-right transition-transform group-hover:translate-x-1" aria-hidden="true"></i>
+                }
+              }
+            </button>
+
+            <div class="my-5 border-t-2 border-dashed border-slate-300 short:my-4"></div>
+
+            <div class="flex flex-col gap-1 font-mono text-[11px] uppercase tracking-wider text-slate-500 short:hidden" aria-hidden="true">
+              <div class="flex gap-2">
+                <span>Fecha</span><span class="flex-1 -translate-y-[3px] border-b border-dotted border-slate-300"></span><span class="tabular-nums text-slate-700">{{ printedDate() }}</span>
+              </div>
+              <div class="flex gap-2">
+                <span>Hora</span><span class="flex-1 -translate-y-[3px] border-b border-dotted border-slate-300"></span><span class="tabular-nums text-slate-700">{{ printedTime() }}</span>
+              </div>
+            </div>
+
+            <div class="relative mx-auto mt-4 h-10 w-[78%] short:mt-0 short:h-9" aria-hidden="true">
+              <div class="barcode h-full w-full"></div>
+              @if (state() === 'submitting') {
+                <div class="absolute -inset-x-1.5 h-0.5 rounded-full bg-rose-500 shadow-[0_0_12px_3px_rgb(244_63_94/0.65)] motion-safe:animate-laser"></div>
+              }
+            </div>
+            <p class="mt-2 text-center font-mono text-[11px] tracking-[0.4em] text-slate-500" aria-hidden="true">*NOVA*ACCESO*</p>
+            <p class="mt-3 text-center font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500" aria-hidden="true">¡Gracias por su preferencia!</p>
+
+            @if (state() === 'success' || state() === 'error') {
+              <div
+                class="pointer-events-none absolute bottom-14 left-1/2 -translate-x-1/2 rotate-[-14deg] rounded-lg border-[3px] bg-paper/40 px-4 py-1.5 font-mono text-xl font-bold uppercase tracking-[0.25em] mix-blend-multiply"
+                [class]="state() === 'success' ? 'border-emerald-600/80 text-emerald-600/80' : 'border-rose-600/75 text-rose-600/75'"
+                aria-hidden="true"
+              >
+                <span class="block motion-safe:animate-stamp">{{ state() === 'success' ? 'Aprobado' : 'Rechazado' }}</span>
+              </div>
+            }
+          </form>
+        </div>
+      </div>
+      <p class="text-center text-xs text-muted">© {{ year() }} NOVA · Hecho para tu mostrador</p>
+    </section>
+
+    @if (isDesktop()) {
+      <app-game-panel class="block w-full max-w-[340px] motion-safe:animate-enter [animation-delay:.16s]" [formFocused]="formFocused()" />
+    }
+  </main>
+
+  <!-- Minijuegos en pantallas pequeñas -->
+  <dialog
+    #gamesDialog
+    class="m-auto w-[min(380px,calc(100vw-24px))] max-h-[calc(100dvh-24px)] overflow-y-auto bg-transparent text-ink"
+    aria-label="Minijuegos"
+    (close)="gamesOpen.set(false)"
+  >
+    @if (gamesOpen()) {
+      <div class="mb-2 flex justify-end">
+        <button type="button" class="grid size-10 place-items-center rounded-full bg-white/10 text-lg text-white hover:bg-white/20" aria-label="Cerrar minijuegos" (click)="closeGames()">
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+      </div>
+      <app-game-panel class="block rounded-[20px] bg-[#16133d]/95 shadow-2xl shadow-black/60" [formFocused]="false" />
+    }
+  </dialog>
 </div>

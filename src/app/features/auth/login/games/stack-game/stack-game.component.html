@@ -1,0 +1,53 @@
+<div
+  class="dot-grid relative mx-auto h-[340px] w-[280px] max-w-full overflow-hidden rounded-2xl bg-black/20 ring-1 ring-white/10"
+>
+  <div
+    class="absolute inset-0 transition-transform duration-300"
+    [style.transform]="'translateY(' + cameraOffset() + 'px)'"
+  >
+    @for (box of stack(); track box.level) {
+      <div
+        class="absolute rounded-[4px] border-2 border-cardboard-edge bg-cardboard"
+        [style.left.px]="box.x"
+        [style.width.px]="box.width"
+        [style.height.px]="boxHeight"
+        [style.bottom.px]="box.level * boxHeight"
+      >
+        <span class="absolute inset-y-0 left-[30%] right-[30%] bg-[#e6c491]/50"></span>
+      </div>
+    }
+    @if (active(); as box) {
+      <div
+        class="absolute rounded-[4px] border-2 border-violet-deep bg-violet-soft"
+        [style.left.px]="box.x"
+        [style.width.px]="box.width"
+        [style.height.px]="boxHeight"
+        [style.bottom.px]="box.level * boxHeight"
+      >
+        <span class="absolute inset-y-0 left-[30%] right-[30%] bg-white/20"></span>
+      </div>
+    }
+  </div>
+  <p
+    class="absolute inset-x-0 top-3 z-10 text-center text-sm font-bold"
+    [class]="toneClass[message().tone]"
+    aria-live="polite"
+  >
+    {{ message().text }}
+  </p>
+</div>
+
+<div class="mt-3 flex gap-2">
+  <button
+    type="button"
+    [class]="btnPrimary"
+    class="flex-1 py-3 text-[15px] tracking-[0.2em]"
+    [disabled]="gameOver()"
+    (click)="drop()"
+  >
+    SOLTAR
+  </button>
+  <button type="button" [class]="btnGhost" aria-label="Reiniciar" (click)="restart()">
+    <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
+  </button>
+</div>

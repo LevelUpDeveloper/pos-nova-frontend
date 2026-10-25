@@ -1,0 +1,81 @@
+<app-round-timer [remaining]="round.remaining()" [seconds]="round.seconds" />
+
+<div class="relative mt-3 rounded-xl">
+  <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+    <ng-container
+      [ngTemplateOutlet]="card"
+      [ngTemplateOutletContext]="{ $implicit: current(), price: money(current().price) }"
+    />
+    <span class="font-mono text-xs font-extrabold text-violet-pale">VS</span>
+    <ng-container
+      [ngTemplateOutlet]="card"
+      [ngTemplateOutletContext]="{
+        $implicit: next(),
+        price: revealed() ? money(next().price) : '$ ?',
+      }"
+    />
+  </div>
+
+  <ng-template #card let-product let-price="price">
+    <div
+      class="flex min-h-[150px] flex-col items-center justify-center rounded-xl bg-paper p-3 text-center text-paper-ink shadow-[0_10px_24px_-10px_rgb(0_0_0/0.6)]"
+    >
+      <span class="grid size-10 place-items-center rounded-full bg-violet/15 text-violet-deep">
+        <i class="bi bi-tag-fill" aria-hidden="true"></i>
+      </span>
+      <p class="mt-2 text-[13px] font-bold leading-tight">{{ product.name }}</p>
+      <p class="mt-1.5 font-mono text-xl font-extrabold">{{ price }}</p>
+    </div>
+  </ng-template>
+
+  <p
+    class="mt-4 h-5 text-center text-sm font-semibold"
+    [class]="toneClass[message().tone]"
+    aria-live="polite"
+  >
+    {{ message().text }}
+  </p>
+
+  <div class="mt-3 grid gap-2">
+    <button
+      type="button"
+      class="rounded-xl bg-success py-3.5 text-[15px] font-extrabold text-[#052e16] transition hover:brightness-110 active:translate-y-px disabled:opacity-50"
+      [disabled]="revealed()"
+      (click)="guess(true)"
+    >
+      ▲ Más caro
+    </button>
+    <button
+      type="button"
+      class="rounded-xl bg-[#f59e0b] py-3.5 text-[15px] font-extrabold text-[#3b1d00] transition hover:brightness-110 active:translate-y-px disabled:opacity-50"
+      [disabled]="revealed()"
+      (click)="guess(false)"
+    >
+      ▼ Más barato
+    </button>
+  </div>
+
+  <p class="mt-4 text-center text-[13px] text-muted">
+    ¿<b class="text-ink">{{ next().name }}</b> cuesta más o menos?
+  </p>
+
+  @if (!running()) {
+    @if (finished()) {
+      <app-game-overlay
+        heading="¡Tiempo!"
+        [message]="'Acertaste ' + score() + (score() === 1 ? ' precio' : ' precios')"
+        cta="Jugar otra vez"
+        (action)="start()"
+      />
+    } @else {
+      <app-game-overlay
+        heading="¿Más caro o más barato?"
+        message="Adivina si el siguiente producto cuesta más o menos. Rondas de {{
+          round.seconds
+        }} s."
+        cta="Empezar"
+        (action)="start()"
+      />
+    }
+  }
+</div>
