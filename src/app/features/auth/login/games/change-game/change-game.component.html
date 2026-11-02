@@ -1,0 +1,81 @@
+<app-round-timer [remaining]="round.remaining()" [seconds]="round.seconds" />
+
+<div class="relative mt-3 rounded-xl">
+  <div
+    class="rounded-xl bg-paper p-4 font-mono text-[13px] text-paper-ink shadow-[0_10px_24px_-10px_rgb(0_0_0/0.6)]"
+  >
+    <div class="flex justify-between">
+      <span class="text-slate-600">TOTAL COMPRA</span><b>{{ money(total()) }}</b>
+    </div>
+    <div class="mt-1 flex justify-between">
+      <span class="text-slate-600">PAGA CON</span><b>{{ money(paidWith()) }}</b>
+    </div>
+    <div class="my-2 border-t-2 border-dashed border-slate-300"></div>
+    <div class="flex items-end justify-between">
+      <span class="text-slate-600">LLEVAS</span><b class="text-2xl">{{ money(carried()) }}</b>
+    </div>
+  </div>
+
+  <p
+    class="mt-3 h-5 text-center text-sm font-semibold"
+    [class]="toneClass[message().tone]"
+    aria-live="polite"
+  >
+    {{ message().text }}
+  </p>
+
+  <div class="mt-3 grid grid-cols-4 gap-2">
+    @for (coin of coins; track coin) {
+      <button
+        type="button"
+        [attr.aria-label]="'Agregar ' + coin + ' pesos'"
+        class="coin-face mx-auto grid size-[62px] place-items-center rounded-full font-mono text-[15px] font-extrabold transition active:scale-95"
+        (click)="add(coin)"
+      >
+        ${{ coin }}
+      </button>
+    }
+    @for (bill of bills; track bill) {
+      <button
+        type="button"
+        [attr.aria-label]="'Agregar ' + bill + ' pesos'"
+        class="grid h-[62px] place-items-center rounded-lg border-2 border-[#7fd1ad] bg-bill font-mono text-[15px] font-extrabold text-white transition active:scale-95"
+        (click)="add(bill)"
+      >
+        ${{ bill }}
+      </button>
+    }
+    <button
+      type="button"
+      [class]="btnGhost"
+      class="h-[62px] flex-col px-0 text-xs"
+      (click)="clear()"
+    >
+      <i class="bi bi-backspace" aria-hidden="true"></i>Borrar
+    </button>
+  </div>
+
+  <p class="mt-3 text-center font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
+    Cobros <span class="text-gold">{{ score() }}</span>
+  </p>
+
+  @if (!running()) {
+    @if (finished()) {
+      <app-game-overlay
+        heading="¡Tiempo!"
+        [message]="'Cobraste ' + score() + (score() === 1 ? ' venta' : ' ventas')"
+        cta="Jugar otra vez"
+        (action)="start()"
+      />
+    } @else {
+      <app-game-overlay
+        heading="Da el cambio"
+        message="Calcula el cambio y entrégalo con monedas y billetes. Rondas de {{
+          round.seconds
+        }} s."
+        cta="Empezar"
+        (action)="start()"
+      />
+    }
+  }
+</div>

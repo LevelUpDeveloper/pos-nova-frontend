@@ -1,0 +1,92 @@
+<section
+  class="rounded-[20px] border border-white/10 bg-white/5 p-5 backdrop-blur"
+  aria-label="Minijuegos mientras esperas"
+>
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0">
+      <h2 class="text-[17px] font-extrabold">{{ game().title }}</h2>
+      <p class="mt-0.5 text-[13px] text-muted">{{ game().subtitle }}</p>
+    </div>
+    <div class="shrink-0 text-right">
+      <p class="font-mono text-[22px] font-extrabold leading-none text-gold tabular-nums" aria-live="polite">
+        {{ score() }}
+      </p>
+      <p class="mt-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-muted">
+        Récord {{ best().score }}
+      </p>
+      @if (best().score > 0) {
+        <p
+          class="mt-0.5 max-w-[120px] truncate text-[11px] font-semibold"
+          [class]="best().user ? 'text-violet-pale' : 'text-muted'"
+          [attr.title]="best().user ?? 'Récord sin firmar'"
+        >
+          <i class="bi bi-trophy-fill mr-1 text-gold" aria-hidden="true"></i>{{ best().user ?? 'Sin firmar' }}
+        </p>
+      }
+    </div>
+  </div>
+
+  @if (newRecord()) {
+    <p
+      class="mt-3 flex items-center gap-2 rounded-xl border border-gold/30 bg-gold/10 px-3 py-2 text-xs font-semibold text-gold"
+      role="status"
+    >
+      <i class="bi bi-trophy-fill" aria-hidden="true"></i>
+      ¡Nuevo récord! Inicia sesión para firmarlo con tu nombre.
+    </p>
+  }
+
+  <div class="mt-4 grid grid-cols-3 gap-2" role="group" aria-label="Elegir juego">
+    @for (g of games; track g.id) {
+      <button
+        type="button"
+        class="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl border px-1 py-2 text-xs font-semibold transition"
+        [class]="
+          g.id === current()
+            ? 'border-violet-soft bg-violet/25 text-white'
+            : 'border-white/10 bg-white/5 text-muted-2 hover:bg-white/10 hover:text-white'
+        "
+        [attr.aria-pressed]="g.id === current()"
+        [attr.title]="g.title"
+        (click)="select(g.id)"
+      >
+        <i class="bi shrink-0 text-base" [class]="g.icon" aria-hidden="true"></i>
+        <span class="truncate">{{ g.shortTitle }}</span>
+      </button>
+    }
+  </div>
+
+  <div class="mt-4">
+    @if (component(); as game) {
+      <ng-container *ngComponentOutlet="game; inputs: gameInputs()" />
+    } @else if (loadFailed()) {
+      <div
+        class="grid h-[380px] place-items-center rounded-2xl border border-white/10 bg-white/5 p-6 text-center"
+        role="alert"
+      >
+        <div>
+          <i class="bi bi-cloud-slash text-3xl text-muted" aria-hidden="true"></i>
+          <p class="mt-2 text-sm font-semibold">No se pudo cargar el juego</p>
+          <p class="mt-1 text-xs text-muted">
+            {{ online() ? 'Recarga la página para volver a intentarlo.' : 'Sin conexión: espera a que vuelva la red.' }}
+          </p>
+          <button
+            type="button"
+            [class]="btnGhost"
+            class="mt-4"
+            [disabled]="!online()"
+            (click)="reloadPage()"
+          >
+            <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>Recargar página
+          </button>
+        </div>
+      </div>
+    } @else {
+      <div
+        class="h-[380px] rounded-2xl bg-white/5 motion-safe:animate-shimmer"
+        aria-busy="true"
+        aria-label="Cargando juego"
+      ></div>
+    }
+  </div>
+</section>

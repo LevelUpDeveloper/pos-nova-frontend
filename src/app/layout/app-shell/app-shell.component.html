@@ -1,0 +1,11 @@
+<div class="nova-ui bg-nova-night relative flex min-h-dvh flex-col overflow-x-hidden font-sans text-ink antialiased">
+  <header class="relative mx-auto flex w-full max-w-[1320px] items-center px-4 py-5 motion-safe:animate-enter sm:px-10 short:py-4">
+    <app-brand-mark [subtitle]="text.brandSubtitle" />
+  </header>
+
+  <main class="relative mx-auto flex w-full max-w-[1320px] flex-1 flex-col px-4 pb-32 sm:px-10">
+    <router-outlet />
+  </main>
+
+  <app-dock [items]="nav" [user]="user()" [now]="now()" [online]="online()" (logout)="onLogout()" />
+</div>

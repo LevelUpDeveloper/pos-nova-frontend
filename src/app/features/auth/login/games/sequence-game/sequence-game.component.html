@@ -1,0 +1,64 @@
+<app-round-timer [remaining]="round.remaining()" [seconds]="round.seconds" />
+
+<p
+  class="my-3 h-5 text-center text-sm font-semibold"
+  [class]="toneClass[message().tone]"
+  aria-live="polite"
+>
+  {{ message().text }}
+</p>
+
+<div class="relative rounded-2xl">
+  <div class="grid grid-cols-2 gap-3">
+    @for (pad of pads; track pad.key; let i = $index) {
+      <button
+        type="button"
+        class="relative flex h-[104px] flex-col items-center justify-center gap-1 rounded-2xl text-white transition-[filter,box-shadow,opacity] duration-150"
+        [style.background]="pad.color"
+        [style.opacity]="phase() === 'showing' && lit() !== i ? 0.45 : 1"
+        [style.filter]="lit() === i ? 'brightness(1.35) saturate(1.1)' : null"
+        [style.box-shadow]="lit() === i ? '0 0 0 3px #fff6, 0 0 28px 6px ' + pad.color : null"
+        [attr.aria-label]="pad.label"
+        (click)="press(i)"
+      >
+        <span
+          class="absolute left-3 top-2.5 font-mono text-[11px] font-extrabold opacity-80"
+          aria-hidden="true"
+        >
+          {{ pad.key }}
+        </span>
+        <i class="bi text-2xl" [class]="pad.icon" aria-hidden="true"></i>
+        <span class="text-[13px] font-bold">{{ pad.label }}</span>
+      </button>
+    }
+  </div>
+
+  @switch (phase()) {
+    @case ('intro') {
+      <app-game-overlay
+        heading="Secuencia de caja"
+        message="Repite el orden de cobro. Cada acierto agrega un paso. El tiempo ({{
+          round.seconds
+        }} s) corre solo en tu turno."
+        cta="Empezar"
+        (action)="start()"
+      />
+    }
+    @case ('failed') {
+      <app-game-overlay
+        heading="Cobro equivocado"
+        [message]="'Llegaste al nivel ' + reachedLevel()"
+        cta="Reintentar"
+        (action)="start()"
+      />
+    }
+    @case ('timeout') {
+      <app-game-overlay
+        heading="¡Tiempo!"
+        [message]="'Llegaste al nivel ' + reachedLevel()"
+        cta="Jugar otra vez"
+        (action)="start()"
+      />
+    }
+  }
+</div>

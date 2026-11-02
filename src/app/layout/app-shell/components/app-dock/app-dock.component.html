@@ -1,0 +1,64 @@
+<nav
+  class="pointer-events-none fixed inset-x-0 bottom-3 z-40 flex justify-center px-3 sm:bottom-5"
+  [attr.aria-label]="text.navLabel"
+>
+  <div
+    class="pointer-events-auto flex max-w-full items-center gap-1.5 overflow-x-auto rounded-[24px] [scrollbar-width:none] border border-white/15 bg-[#16133d]/80 p-2 shadow-[0_24px_50px_-10px_rgb(0_0_0/0.7)] backdrop-blur-xl"
+  >
+    <!-- Usuario -->
+    <div class="flex shrink-0 items-center gap-2.5 rounded-[18px] bg-white/5 p-1.5">
+      <span
+        class="grid size-9 shrink-0 place-items-center rounded-xl bg-violet/40 text-[12px] font-bold"
+        aria-hidden="true"
+        >{{ initials() }}</span
+      >
+      <div class="hidden leading-tight md:block">
+        <p class="max-w-[140px] truncate text-[12px] font-bold">{{ userName() }}</p>
+        <p class="max-w-[140px] truncate text-[10px] text-muted">{{ roleLabel() }}</p>
+      </div>
+      <button
+        type="button"
+        class="grid size-8 place-items-center rounded-lg text-muted transition hover:bg-white/10 hover:text-white"
+        [attr.aria-label]="text.logout"
+        [title]="text.logout"
+        (click)="logout.emit()"
+      >
+        <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <span class="mx-1 h-9 w-px shrink-0 bg-white/10" aria-hidden="true"></span>
+
+    <!-- Módulos -->
+    <ul class="flex items-center gap-1">
+      @for (item of items(); track item.id) {
+        <li>
+          <app-nav-action
+            [item]="item"
+            [comingSoon]="text.comingSoon"
+            [baseClass]="itemBase"
+            [idleClass]="itemIdle"
+            [activeClass]="itemActive"
+          >
+            <i class="bi text-[18px]" [class]="item.icon" aria-hidden="true"></i>
+            <span class="max-lg:sr-only">{{ item.label }}</span>
+          </app-nav-action>
+        </li>
+      }
+    </ul>
+
+    <span class="mx-1 hidden h-9 w-px shrink-0 bg-white/10 sm:block" aria-hidden="true"></span>
+
+    <!-- Estado -->
+    <div
+      class="hidden shrink-0 items-center gap-3 rounded-[18px] bg-white/5 px-4 py-2 font-mono text-[12px] sm:flex"
+      role="status"
+    >
+      <span class="flex items-center gap-1.5" [class]="online() ? 'text-success-soft' : 'text-danger'">
+        <span class="size-2 rounded-full" [class]="online() ? 'bg-success' : 'bg-danger'" aria-hidden="true"></span>
+        <span class="uppercase">{{ online() ? text.online : text.offline }}</span>
+      </span>
+      <span class="text-[15px] font-bold tabular-nums text-ink">{{ time() }}</span>
+    </div>
+  </div>
+</nav>
