@@ -11,7 +11,7 @@ import {
 import { DEFAULT_GAME, GAME_IDS, GAMES } from '../../games/game-registry';
 import { GameComponent, GameId } from '../../games/game.types';
 import { BTN_GHOST } from '../../games/game-utils';
-import { injectOnline, injectPageHidden } from '../../shared/browser-signals';
+import { injectOnline, injectPageHidden } from '../../../../../shared/browser/browser-signals';
 import { GameRecordsService } from '../../shared/game-records.service';
 
 /** Panel de minijuegos con selector, puntaje y récord por juego. */

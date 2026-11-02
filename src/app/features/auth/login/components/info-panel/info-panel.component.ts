@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { LONG_DATE_FORMAT, TIME_FORMAT } from '../../shared/date-formats';
+import { LONG_DATE_FORMAT, TIME_FORMAT } from '../../../../../shared/formats/date-formats';
 
 /** Panel izquierdo: reloj, sucursal y aviso del día. */
 @Component({

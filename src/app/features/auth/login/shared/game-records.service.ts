@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { GameId } from '../games/game.types';
-import { safeStorage } from './safe-storage';
+import { safeStorage } from '../../../../shared/browser/safe-storage';
 
 export interface GameRecord {
   score: number;

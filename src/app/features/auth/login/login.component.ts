@@ -8,10 +8,12 @@ import { LoginRequest } from '../../../core/services/auth/login-request.interfac
 import { CoinsBackgroundComponent } from './components/coins-background/coins-background.component';
 import { GamePanelComponent } from './components/game-panel/game-panel.component';
 import { InfoPanelComponent } from './components/info-panel/info-panel.component';
-import { injectMediaQuery, injectNow, injectOnline } from './shared/browser-signals';
-import { SHORT_DATE_FORMAT, TIME_FORMAT } from './shared/date-formats';
+import { injectMediaQuery, injectNow, injectOnline } from '../../../shared/browser/browser-signals';
+import { SHORT_DATE_FORMAT, TIME_FORMAT } from '../../../shared/formats/date-formats';
 import { GameRecordsService } from './shared/game-records.service';
-import { LOGIN_ERRORS, LOGIN_INFO } from './login.config';
+import { BrandMarkComponent } from '../../../shared/components/brand-mark/brand-mark.component';
+import { APP_PATHS } from '../../../app.paths';
+import { LOGIN_BRAND_SUBTITLE, LOGIN_ERRORS, LOGIN_INFO } from './login.config';
 
 type LoginState = 'idle' | 'submitting' | 'error' | 'success';
 
@@ -27,7 +29,13 @@ const SHAKE: Keyframe[] = [
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CoinsBackgroundComponent, InfoPanelComponent, GamePanelComponent],
+  imports: [
+    ReactiveFormsModule,
+    BrandMarkComponent,
+    CoinsBackgroundComponent,
+    InfoPanelComponent,
+    GamePanelComponent,
+  ],
   providers: [GameRecordsService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
@@ -45,6 +53,7 @@ export class LoginComponent {
   });
 
   protected readonly info = LOGIN_INFO;
+  protected readonly brandSubtitle = LOGIN_BRAND_SUBTITLE;
   protected readonly state = signal<LoginState>('idle');
   protected readonly errorMessage = signal('');
   protected readonly showPassword = signal(false);
@@ -89,7 +98,7 @@ export class LoginComponent {
       next: response => {
         this.state.set('success');
         this.records.signPending(response.userName);
-        this.router.navigate(['/admin-panel']);
+        this.router.navigate(['/', APP_PATHS.home]);
       },
 
       error: (error: HttpErrorResponse) => {

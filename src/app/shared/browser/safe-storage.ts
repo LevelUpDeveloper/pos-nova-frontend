@@ -18,4 +18,12 @@ export const safeStorage = {
       // Sin almacenamiento disponible: el dato solo vive en memoria.
     }
   },
+
+  remove(key: string): void {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      // Sin almacenamiento disponible: no hay nada que borrar.
+    }
+  },
 };

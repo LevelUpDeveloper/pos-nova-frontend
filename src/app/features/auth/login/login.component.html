@@ -1,18 +1,10 @@
-<div class="nova-login bg-nova-night relative flex min-h-dvh flex-col overflow-x-hidden font-sans text-ink antialiased">
+<div class="nova-ui bg-nova-night relative flex min-h-dvh flex-col overflow-x-hidden font-sans text-ink antialiased">
 
   <app-coins-background />
 
   <!-- Encabezado -->
   <header class="relative mx-auto flex w-full max-w-[1280px] items-center justify-between px-5 py-5 motion-safe:animate-enter sm:px-10 short:py-4">
-    <div class="flex items-center gap-3">
-      <span class="grid size-11 place-items-center rounded-xl bg-linear-to-br from-violet-pale via-violet to-violet-deep text-xl text-white shadow-lg shadow-violet-deep/40 ring-1 ring-white/20" aria-hidden="true">
-        <i class="bi bi-shop"></i>
-      </span>
-      <div class="leading-tight">
-        <p class="text-base font-extrabold tracking-[0.22em]">NOVA</p>
-        <p class="whitespace-nowrap text-xs font-medium text-muted">Punto de venta</p>
-      </div>
-    </div>
+    <app-brand-mark [subtitle]="brandSubtitle" />
 
     <div class="flex items-center gap-2.5">
       @if (!isDesktop()) {

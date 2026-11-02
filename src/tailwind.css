@@ -1,7 +1,7 @@
 /*
  * Tailwind CSS v4 sin preflight: solo tema y utilidades, para no alterar
  * los estilos de las vistas existentes. El reinicio de estilos se limita a
- * los elementos dentro de `.nova-login`.
+ * los elementos dentro de `.nova-ui`.
  */
 @layer theme, base, components, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
@@ -82,42 +82,59 @@
   }
 }
 
-/* Reinicio acotado al login (equivalente al preflight, solo dentro de .nova-login). */
+/* Reinicio acotado a las pantallas de POS Nova (equivalente al preflight, solo dentro de .nova-ui). */
 @layer base {
-  body:has(.nova-login) {
+  body:has(.nova-ui) {
     margin: 0;
   }
-  .nova-login,
-  .nova-login *,
-  .nova-login ::before,
-  .nova-login ::after {
+  .nova-ui,
+  .nova-ui *,
+  .nova-ui ::before,
+  .nova-ui ::after {
     box-sizing: border-box;
     border: 0 solid;
     margin: 0;
     padding: 0;
   }
-  .nova-login button,
-  .nova-login input {
+  .nova-ui button,
+  .nova-ui input {
     font: inherit;
     color: inherit;
     background-color: transparent;
   }
   /* Edge/IE agregan su propio botón de mostrar contraseña; el login ya tiene uno. */
   /* Reglas separadas: un selector desconocido invalidaría la regla completa. */
-  .nova-login input::-ms-reveal {
+  .nova-ui input::-ms-reveal {
     display: none;
   }
-  .nova-login input::-ms-clear {
+  .nova-ui input::-ms-clear {
     display: none;
   }
-  .nova-login button:not(:disabled) {
+  .nova-ui button:not(:disabled) {
     cursor: pointer;
   }
-  .nova-login dialog {
+  .nova-ui a {
+    color: inherit;
+    text-decoration: inherit;
+  }
+  .nova-ui h1,
+  .nova-ui h2,
+  .nova-ui h3 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  .nova-ui ol,
+  .nova-ui ul {
+    list-style: none;
+  }
+  .nova-ui kbd {
+    font: inherit;
+  }
+  .nova-ui dialog {
     max-width: none;
     max-height: none;
   }
-  .nova-login dialog::backdrop {
+  .nova-ui dialog::backdrop {
     background: rgb(5 7 20 / 0.72);
     backdrop-filter: blur(4px);
   }
