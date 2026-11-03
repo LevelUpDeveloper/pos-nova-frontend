@@ -10,4 +10,6 @@ export interface NavItem {
   readonly shortcut?: string;
   readonly description?: string;
   readonly tone?: 'primary' | 'gold';
+  /** Si se indica, solo lo ven usuarios con alguno de estos roles. */
+  readonly roles?: readonly string[];
 }

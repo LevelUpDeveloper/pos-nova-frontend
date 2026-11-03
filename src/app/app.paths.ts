@@ -2,5 +2,5 @@
 export const APP_PATHS = {
   login: 'login',
   home: 'inicio',
-  adminPanel: 'admin-panel',
+  admin: 'administracion',
 } as const;

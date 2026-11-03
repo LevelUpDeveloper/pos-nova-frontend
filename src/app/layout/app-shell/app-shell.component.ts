@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 
 import { APP_PATHS } from '../../app.paths';
@@ -20,8 +20,11 @@ export class AppShellComponent {
   private readonly router = inject(Router);
 
   protected readonly text = APP_SHELL_TEXT;
-  protected readonly nav = APP_SHELL_NAV;
   protected readonly user = this.auth.user;
+  /** Solo los módulos permitidos para los roles del usuario. */
+  protected readonly nav = computed(() =>
+    APP_SHELL_NAV.filter((item) => !item.roles || this.auth.hasAnyRole(item.roles)),
+  );
   protected readonly now = injectNow();
   protected readonly online = injectOnline();
 

@@ -1,0 +1,20 @@
+<div class="flex flex-wrap items-end gap-1 pl-4 sm:pl-6" role="tablist" [attr.aria-label]="label()">
+  @for (area of areas(); track area.id; let i = $index) {
+    <button
+      #tab
+      type="button"
+      role="tab"
+      [id]="'admin-tab-' + area.id"
+      [attr.aria-selected]="area.id === active()"
+      [attr.aria-controls]="panelId()"
+      [tabindex]="area.id === active() || (active() === null && i === 0) ? 0 : -1"
+      class="flex items-center gap-2 rounded-t-2xl px-4 text-[14px] transition sm:px-6"
+      [class]="tabClass(i, area.id === active())"
+      (click)="selected.emit(area.id)"
+      (keydown)="onKeydown($event, i)"
+    >
+      <i class="bi" [class]="area.icon + (area.id === active() ? ' text-folder-accent' : '')" aria-hidden="true"></i>
+      {{ area.label }}
+    </button>
+  }
+</div>

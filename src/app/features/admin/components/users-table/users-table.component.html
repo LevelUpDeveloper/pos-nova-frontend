@@ -1,0 +1,34 @@
+<div class="mt-4 overflow-x-auto rounded-2xl border border-folder-card-border bg-folder-card">
+  <table class="w-full min-w-[520px] border-collapse text-left text-[13px]">
+    <caption class="sr-only">{{ text.caption }}</caption>
+    <thead class="border-b border-folder-card-border bg-black/[0.03] font-mono text-[10.5px] uppercase tracking-[0.15em] text-folder-muted">
+      <tr>
+        <th scope="col" class="px-4 py-2 font-bold">{{ text.user }}</th>
+        <th scope="col" class="px-4 py-2 font-bold">{{ text.role }}</th>
+        <th scope="col" class="px-4 py-2 font-bold">{{ text.lastAccess }}</th>
+        <th scope="col" class="px-4 py-2 text-right font-bold">{{ text.status }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of users(); track user.userName; let i = $index) {
+        <tr class="border-b border-folder-card-border/60 last:border-0">
+          <td class="px-4 py-2">
+            <span class="flex items-center gap-2.5 font-semibold">
+              <span class="grid size-7 shrink-0 place-items-center rounded-full text-[10px] font-bold text-white" [class]="avatarTone(i)" aria-hidden="true">
+                {{ initialsOf(user.userName) }}
+              </span>
+              {{ user.userName }}
+            </span>
+          </td>
+          <td class="px-4 py-2">{{ user.role }}</td>
+          <td class="px-4 py-2 font-mono text-[12px] text-folder-muted">{{ lastAccess(user) }}</td>
+          <td class="px-4 py-2 text-right">
+            <span class="rounded-full px-2 py-0.5 font-mono text-[10.5px] font-bold uppercase" [class]="statusClass[user.status]">
+              {{ statusLabel[user.status] }}
+            </span>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

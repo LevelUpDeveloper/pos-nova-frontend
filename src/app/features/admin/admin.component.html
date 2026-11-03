@@ -1,0 +1,82 @@
+<!-- z-20: el panel de colores debe quedar encima del archivero y la bitácora. -->
+<div class="relative z-20 flex flex-wrap items-end justify-between gap-4 motion-safe:animate-enter">
+  <div>
+    <p class="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-violet-pale">
+      <i class="bi bi-shield-lock-fill" aria-hidden="true"></i> {{ text.eyebrow }}
+    </p>
+    <h1 class="mt-1 text-[30px] font-extrabold tracking-tight">
+      {{ text.title }} <span class="text-muted">{{ text.titleMuted }}</span>
+    </h1>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2.5">
+    <label
+      class="group flex h-11 w-[300px] max-w-full items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 text-[14px] text-muted transition focus-within:border-violet-soft focus-within:ring-2 focus-within:ring-violet-soft/40"
+    >
+      <i class="bi bi-search group-focus-within:text-violet-pale" aria-hidden="true"></i>
+      <span class="sr-only">{{ text.searchLabel }}</span>
+      <input
+        type="search"
+        class="min-w-0 flex-1 text-ink outline-none placeholder:text-muted"
+        [placeholder]="text.searchPlaceholder"
+        [value]="query()"
+        (input)="onSearch($event)"
+        autocomplete="off"
+        maxlength="60"
+      />
+    </label>
+    <app-theme-panel />
+  </div>
+</div>
+
+<div class="mt-4 grid grid-cols-[minmax(0,1fr)] items-start gap-8 xl:grid-cols-[minmax(0,1fr)_310px]">
+  <div class="flex min-w-0 flex-col motion-safe:animate-enter [animation-delay:.08s]">
+    <app-folder-tabs
+      [areas]="areas"
+      [active]="searching() ? null : activeArea().id"
+      [label]="text.areasLabel"
+      [panelId]="panelId"
+      (selected)="selectArea($event)"
+    />
+    <section
+      [id]="panelId"
+      role="tabpanel"
+      [attr.aria-labelledby]="searching() ? null : 'admin-tab-' + activeArea().id"
+      class="paper-lines relative rounded-[24px] rounded-tl-none bg-folder-paper p-5 text-folder-ink shadow-[0_30px_60px_-20px_rgb(0_0_0/0.7)] transition-colors sm:p-6"
+    >
+      @if (searching()) {
+        <app-folder-sheet
+          [folio]="text.resultsFolio"
+          [heading]="text.resultsHeading(query().trim())"
+          [stamp]="text.confidential"
+          [modules]="results()"
+          [stats]="summary.moduleStats"
+          [comingSoon]="text.comingSoon"
+          [emptyText]="text.noResults"
+        />
+      } @else {
+        <app-folder-sheet
+          [folio]="text.folio(activeIndex(), activeArea().label)"
+          [heading]="activeArea().heading"
+          [stamp]="text.confidential"
+          [modules]="activeArea().modules"
+          [stats]="summary.moduleStats"
+          [createAction]="activeArea().createAction"
+          [comingSoon]="text.comingSoon"
+          [emptyText]="text.noResults"
+        >
+          @if (activeArea().id === 'people') {
+            <app-users-table [users]="summary.recentUsers" [now]="now()" />
+          }
+        </app-folder-sheet>
+      }
+    </section>
+  </div>
+
+  <app-change-log
+    class="block motion-safe:animate-enter [animation-delay:.16s] xl:mt-12"
+    [entries]="summary.changeLog"
+    [branchName]="branchName"
+    [comingSoon]="text.comingSoon"
+  />
+</div>

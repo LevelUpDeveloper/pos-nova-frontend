@@ -82,6 +82,25 @@
   }
 }
 
+/*
+ * Colores del archivero de administración. Son personalizables: el componente
+ * define las variables `--folder-*` a partir de la paleta elegida
+ * (features/admin/shared/folder-theme.ts).
+ */
+@theme inline {
+  --color-folder-paper: var(--folder-paper);
+  --color-folder-tab: var(--folder-tab);
+  --color-folder-tab-2: var(--folder-tab-2);
+  --color-folder-tab-3: var(--folder-tab-3);
+  --color-folder-tab-ink: var(--folder-tab-ink);
+  --color-folder-ink: var(--folder-ink);
+  --color-folder-muted: var(--folder-muted);
+  --color-folder-rule: var(--folder-rule);
+  --color-folder-card: var(--folder-card);
+  --color-folder-card-border: var(--folder-card-border);
+  --color-folder-accent: var(--folder-accent);
+}
+
 /* Reinicio acotado a las pantallas de POS Nova (equivalente al preflight, solo dentro de .nova-ui). */
 @layer base {
   body:has(.nova-ui) {

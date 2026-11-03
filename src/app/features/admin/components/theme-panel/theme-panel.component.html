@@ -1,0 +1,137 @@
+@let palette = theme.palette();
+<button
+  #trigger
+  type="button"
+  class="inline-flex h-11 items-center gap-2 rounded-xl px-4 text-[13px] font-semibold transition"
+  [class]="open() ? 'border border-violet-soft bg-violet/25 ring-1 ring-violet-soft' : 'border border-white/10 bg-white/5 hover:bg-white/10'"
+  aria-haspopup="dialog"
+  [attr.aria-expanded]="open()"
+  aria-controls="folder-theme-panel"
+  (click)="toggle()"
+>
+  <span class="flex -space-x-1" aria-hidden="true">
+    <span class="size-3.5 rounded-full ring-2 ring-[#1a1747]" [style.background]="palette.paper"></span>
+    <span class="size-3.5 rounded-full ring-2 ring-[#1a1747]" [style.background]="palette.tab"></span>
+    <span class="size-3.5 rounded-full ring-2 ring-[#1a1747]" [style.background]="palette.accent"></span>
+  </span>
+  {{ text.trigger }}
+</button>
+
+@if (open()) {
+  <section
+    #panel
+    id="folder-theme-panel"
+    role="dialog"
+    aria-labelledby="folder-theme-title"
+    tabindex="-1"
+    class="absolute right-0 top-[calc(100%+12px)] z-50 w-[min(400px,calc(100vw-32px))] rounded-[22px] border border-white/15 bg-[#16133d] p-5 text-ink shadow-[0_30px_60px_-10px_rgb(0_0_0/0.8)] outline-none backdrop-blur-xl motion-safe:animate-pop"
+  >
+    <span class="absolute -top-2 right-12 size-4 rotate-45 border-l border-t border-white/15 bg-[#16133d]" aria-hidden="true"></span>
+
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <p class="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-violet-pale">
+          <i class="bi bi-palette-fill" aria-hidden="true"></i> {{ text.eyebrow }}
+        </p>
+        <h2 id="folder-theme-title" class="mt-1 text-[17px] font-extrabold">{{ text.title }}</h2>
+        <p class="text-[12.5px] text-muted">{{ text.subtitle }}</p>
+      </div>
+      <button
+        type="button"
+        class="grid size-9 shrink-0 place-items-center rounded-lg text-muted transition hover:bg-white/10 hover:text-white"
+        [attr.aria-label]="text.close"
+        (click)="close()"
+      >
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <!-- Paletas -->
+    <h3 class="mt-4 font-mono text-[10.5px] font-bold uppercase tracking-[0.2em] text-muted">{{ text.presets }}</h3>
+    <div class="mt-2 grid grid-cols-5 gap-2">
+      @for (preset of presets; track preset.id) {
+        @let selected = theme.activePresetId() === preset.id;
+        <button
+          type="button"
+          class="relative flex flex-col items-center gap-1.5 rounded-xl border p-2 transition"
+          [class]="selected ? 'border-violet-soft bg-violet/20 ring-2 ring-violet-soft' : 'border-white/10 bg-white/5 hover:bg-white/10'"
+          [attr.aria-pressed]="selected"
+          (click)="pick(preset.palette)"
+        >
+          @if (selected) {
+            <i class="bi bi-check-circle-fill absolute -right-1.5 -top-1.5 text-[15px] text-violet-pale" aria-hidden="true"></i>
+          }
+          <span class="relative h-9 w-full overflow-hidden rounded-md" [style.background]="preset.palette.paper" aria-hidden="true">
+            <span class="absolute bottom-0 left-1 h-3.5 w-4 rounded-t" [style.background]="preset.palette.tab"></span>
+            <span class="absolute right-1 top-1 size-2 rounded-full" [style.background]="preset.palette.ink"></span>
+          </span>
+          <span class="text-center text-[10px] font-semibold leading-tight text-muted-2">{{ preset.label }}</span>
+        </button>
+      }
+    </div>
+
+    <!-- Ajuste fino -->
+    <h3 class="mt-5 font-mono text-[10.5px] font-bold uppercase tracking-[0.2em] text-muted">{{ text.fineTune }}</h3>
+    <div class="mt-2 grid grid-cols-2 gap-2">
+      @for (key of colorKeys; track key) {
+        <label
+          class="flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-2.5 transition focus-within:border-violet-soft focus-within:ring-2 focus-within:ring-violet-soft/40 hover:bg-white/10"
+        >
+          <span class="relative size-8 shrink-0 overflow-hidden rounded-lg ring-1 ring-white/20" [style.background]="palette[key]">
+            <input
+              type="color"
+              class="absolute inset-0 size-full cursor-pointer opacity-0"
+              [value]="palette[key]"
+              (input)="onColor(key, $event)"
+            />
+          </span>
+          <span class="min-w-0">
+            <span class="block text-[12.5px] font-semibold">{{ text.colors[key] }}</span>
+            <span class="block font-mono text-[11px] uppercase text-muted">{{ palette[key] }}</span>
+          </span>
+        </label>
+      }
+    </div>
+
+    <!-- Contraste -->
+    <div
+      class="mt-4 rounded-xl px-3 py-2.5 text-[12.5px] ring-1"
+      [class]="theme.readable() ? 'bg-success/10 ring-success/30' : 'bg-danger/10 ring-danger/40'"
+      role="status"
+    >
+      <div class="flex items-center gap-3">
+        <i class="bi bi-universal-access-circle" [class]="theme.readable() ? 'text-success-soft' : 'text-danger'" aria-hidden="true"></i>
+        <span class="flex-1 text-muted-3">
+          {{ text.contrast }} <b class="font-mono text-ink">{{ contrastLabel() }}</b>
+        </span>
+        <span
+          class="rounded-full px-2 py-0.5 font-mono text-[11px] font-bold"
+          [class]="theme.readable() ? 'bg-success/20 text-success-soft' : 'bg-danger/20 text-danger'"
+          >{{ theme.readable() ? text.contrastOk : text.contrastLow }}</span
+        >
+      </div>
+      @if (!theme.readable()) {
+        <p class="mt-1.5 text-[12px] text-danger">{{ text.contrastHint }}</p>
+      }
+    </div>
+
+    <div class="mt-4 flex items-center justify-between gap-2">
+      <button
+        type="button"
+        class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2.5 text-[13px] font-semibold text-muted-2 transition hover:bg-white/10 hover:text-white"
+        (click)="theme.resetToDefault()"
+      >
+        <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>{{ text.reset }}
+      </button>
+      <div class="flex gap-2">
+        <button type="button" [class]="btnGhost" (click)="close()">{{ text.cancel }}</button>
+        <button type="button" [class]="btnPrimary" [disabled]="!theme.readable()" (click)="save()">
+          <i class="bi bi-check2" aria-hidden="true"></i>{{ text.save }}
+        </button>
+      </div>
+    </div>
+    <p class="mt-3 flex items-center gap-1.5 text-[11.5px] text-muted">
+      <i class="bi bi-pc-display" aria-hidden="true"></i>{{ text.storageNote }}
+    </p>
+  </section>
+}

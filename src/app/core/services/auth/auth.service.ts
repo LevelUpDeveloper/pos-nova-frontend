@@ -52,6 +52,12 @@ export class AuthService {
     return true;
   }
 
+  /** true si el usuario tiene al menos uno de los roles indicados. */
+  hasAnyRole(roles: readonly string[]): boolean {
+    const userRoles = this.user()?.roles ?? [];
+    return roles.some((role) => userRoles.includes(role));
+  }
+
   logout(): void {
     safeStorage.remove(AUTH_STORAGE_KEY);
     this.stored.set(null);

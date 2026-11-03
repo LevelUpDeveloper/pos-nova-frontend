@@ -7,5 +7,5 @@
     <router-outlet />
   </main>
 
-  <app-dock [items]="nav" [user]="user()" [now]="now()" [online]="online()" (logout)="onLogout()" />
+  <app-dock [items]="nav()" [user]="user()" [now]="now()" [online]="online()" (logout)="onLogout()" />
 </div>

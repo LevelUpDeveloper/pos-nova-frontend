@@ -1,0 +1,8 @@
+/** Texto en minúsculas y sin acentos, para búsquedas: "Categorías" → "categorias". */
+export function normalizeSearch(text: string): string {
+  return text
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .trim();
+}
